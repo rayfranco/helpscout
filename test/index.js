@@ -4,6 +4,7 @@ var sinon = require('sinon');
 var chai = require('chai');
 chai.should();
 chai.use(require('sinon-chai'));
+var expect = chai.expect;
 
 
 describe('helpscout', function() {
@@ -169,6 +170,31 @@ describe('helpscout', function() {
                 done();
             });
         });
+
+        it('should pass the headers to the callback if options.returnFullResponse is true', function(done) {
+            endStub.restore();
+            endStub = sinon.stub(superagent.Request.prototype, 'end', function(callback) {
+                this._callback = function() {};
+                callback(null, {
+                    header: {
+                        status: 200,
+                        location: 'https://api.helpscout.net/v1/hooks/250.json'
+                    },
+                    body: {
+                        myprop: 'The bodyyyyy'
+                    }
+                });
+            });
+
+            (new Helpscout(config)).request({
+                returnFullResponse: true,
+                callback: function(err, res) {
+                    expect(res.header).to.exist;
+                    expect(res.header.location).to.exist;
+                    done();
+                }
+            });
+        });
     });
 
     describe('attachments', function() {
@@ -311,6 +337,27 @@ describe('helpscout', function() {
                     postSpy.should.have.been.calledWith('https://api.helpscout.net/v1/hooks.json');
                     sendSpy.should.have.been.calledOnce;
                     chai.assert(sendSpy.args[0][0] === 'hook');
+                    done();
+                });
+            });
+
+            it('should return the id of the webhook in the callback', function(done) {
+                endStub.restore();
+                endStub = sinon.stub(superagent.Request.prototype, 'end', function(callback) {
+                    this._callback = function() {};
+                    callback(null, {
+                        header: {
+                            status: 200,
+                            location: 'https://api.helpscout.net/v1/hooks/250.json'
+                        },
+                        body: {
+                            myprop: 'The bodyyyyy'
+                        }
+                    });
+                });
+
+                Helpscout(config).hooks.create('hook', function(err, res) {
+                    expect(res.webhookId).to.equal(250);
                     done();
                 });
             });
