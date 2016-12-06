@@ -9,7 +9,7 @@
 
 ## Example
 
-Create a new Helpscout instance with config object and fetch the user: 
+Create a new Helpscout instance with config object and fetch the user:
 
 ```js
 var helpscout = require('helpscout')({
@@ -54,13 +54,17 @@ Will fetch a custom by email.
 
 Will create a customer specified in the customer object.
 
+### helpscout.customers.update(customerId, customer, callback)
+
+Will update the customer specified by the id with the customer object.
+
 ### helpscout.hooks.create(hook, callback)
 
 Will create a hook specified in the hook object.
 
 ### helpscout.mailboxes.list([options,] callback)
 
-Will list all the mailboxes. Options are query params to send. Options defaults to { page: 1 } 
+Will list all the mailboxes. Options are query params to send. Options defaults to { page: 1 }
 
 ### helpscout.threads.create(options, callback)
 
